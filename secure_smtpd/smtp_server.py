@@ -13,10 +13,11 @@ except ImportError:
 
 class SMTPServer(smtpd.SMTPServer):
 
-    def __init__(self, localaddr, remoteaddr, ssl=False, certfile=None, keyfile=None, ssl_version=ssl.PROTOCOL_SSLv23, require_authentication=False, credential_validator=None, maximum_execution_time=30, process_count=5):
-        smtpd.SMTPServer.__init__(self, localaddr, remoteaddr)
+    def __init__(self, localaddr, remoteaddr, ssl=False, certfile=None, keyfile=None, ssl_version=ssl.PROTOCOL_SSLv23, require_authentication=False, credential_validator=None, maximum_execution_time=30, process_count=5, data_size_limit=33554432):
+        smtpd.SMTPServer.__init__(self, localaddr, remoteaddr, data_size_limit)
         self.logger = logging.getLogger( secure_smtpd.LOG_NAME )
         self.certfile = certfile
+        self.data_size_limit = data_size_limit
         self.keyfile = keyfile
         self.ssl_version = ssl_version
         self.subprocesses = []
@@ -59,6 +60,7 @@ class SMTPServer(smtpd.SMTPServer):
                         fromaddr,
                         require_authentication=self.require_authentication,
                         credential_validator=self.credential_validator,
+                        data_size_limit=self.data_size_limit,
                         map=map
                     )
 
